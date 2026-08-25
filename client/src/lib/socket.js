@@ -5,6 +5,7 @@ let socket = null;
 export function getSocket() {
   if (typeof window === 'undefined') return null;
 
+  if (!socket) {
     const getSocketUrl = () => {
       if (process.env.NEXT_PUBLIC_SOCKET_URL) return process.env.NEXT_PUBLIC_SOCKET_URL;
       if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
@@ -12,6 +13,7 @@ export function getSocket() {
       }
       return 'http://localhost:5000';
     };
+
     const socketUrl = getSocketUrl();
     socket = io(socketUrl, {
       autoConnect: true,
@@ -22,11 +24,11 @@ export function getSocket() {
     });
 
     socket.on('connect', () => {
-      // console.log('⚡ Connected to Agentflow Socket.IO server');
+      // Connected to Socket.IO server
     });
 
     socket.on('disconnect', () => {
-      // console.log('⚠️ Disconnected from Agentflow Socket.IO server');
+      // Disconnected from Socket.IO server
     });
   }
 
@@ -56,9 +58,17 @@ export function subscribeToUser(userId, onNotification) {
   if (!s || !userId) return () => {};
 
   s.emit('join:user', userId);
-  if (onNotification) s.on('notification:new', onNotification);
+  if (onNotification) s.on('notification', onNotification);
 
   return () => {
-    if (onNotification) s.off('notification:new', onNotification);
+    s.emit('leave:user', userId);
+    if (onNotification) s.off('notification', onNotification);
   };
+}
+
+export function disconnectSocket() {
+  if (socket) {
+    socket.disconnect();
+    socket = null;
+  }
 }
