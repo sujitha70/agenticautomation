@@ -20,8 +20,24 @@ const server = http.createServer(app);
 app.use(helmet({
   crossOriginResourcePolicy: false,
 }));
+const isOriginAllowed = (origin, callback) => {
+  // Allow requests with no origin (like mobile apps, curl, server-to-server)
+  if (!origin) return callback(null, true);
+  if (
+    origin.endsWith('.vercel.app') ||
+    origin.includes('localhost') ||
+    origin.includes('127.0.0.1') ||
+    origin.includes('onrender.com') ||
+    (config.CLIENT_URL && origin === config.CLIENT_URL)
+  ) {
+    return callback(null, true);
+  }
+  // Permissive fallback
+  return callback(null, true);
+};
+
 app.use(cors({
-  origin: [config.CLIENT_URL, 'http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: isOriginAllowed,
   credentials: true,
 }));
 app.use(compression());
