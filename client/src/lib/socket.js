@@ -5,8 +5,14 @@ let socket = null;
 export function getSocket() {
   if (typeof window === 'undefined') return null;
 
-  if (!socket) {
-    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+    const getSocketUrl = () => {
+      if (process.env.NEXT_PUBLIC_SOCKET_URL) return process.env.NEXT_PUBLIC_SOCKET_URL;
+      if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        return 'https://agenticautomation.onrender.com';
+      }
+      return 'http://localhost:5000';
+    };
+    const socketUrl = getSocketUrl();
     socket = io(socketUrl, {
       autoConnect: true,
       reconnection: true,
