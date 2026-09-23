@@ -19,6 +19,8 @@ const server = http.createServer(app);
 // 1. Security & Performance Middleware
 app.use(helmet({
   crossOriginResourcePolicy: false,
+  crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: false,
 }));
 const isOriginAllowed = (origin, callback) => {
   // Allow requests with no origin (like mobile apps, curl, server-to-server)
