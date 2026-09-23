@@ -48,7 +48,12 @@ export const useAuthStore = create((set, get) => ({
       set({ user, token, isAuthenticated: true, isLoading: false, error: null });
       return { success: true, user };
     } catch (err) {
-      const errorMsg = err.response?.data?.error || err.message || 'Login failed';
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        (Array.isArray(err.response?.data?.errors) && err.response.data.errors[0]?.message) ||
+        err.message ||
+        'Login failed';
       set({ error: errorMsg, isLoading: false });
       return { success: false, error: errorMsg };
     }
@@ -64,7 +69,12 @@ export const useAuthStore = create((set, get) => ({
       set({ user, token, isAuthenticated: true, isLoading: false, error: null });
       return { success: true, user };
     } catch (err) {
-      const errorMsg = err.response?.data?.error || err.message || 'Registration failed';
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        (Array.isArray(err.response?.data?.errors) && err.response.data.errors[0]?.message) ||
+        err.message ||
+        'Registration failed';
       set({ error: errorMsg, isLoading: false });
       return { success: false, error: errorMsg };
     }

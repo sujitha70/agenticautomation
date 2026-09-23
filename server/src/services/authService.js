@@ -40,7 +40,7 @@ class AuthService {
   }
 
   async login({ email, password }) {
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOneWithPassword({ email: email.toLowerCase() });
     if (!user) {
       const error = new Error('Invalid email or password credentials.');
       error.statusCode = 401;

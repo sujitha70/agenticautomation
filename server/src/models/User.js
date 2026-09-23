@@ -105,6 +105,13 @@ class UserModelWrapper {
     return null;
   }
 
+  static async findOneWithPassword(query) {
+    if (!isInMemory && mongoose.connection.readyState === 1) {
+      return await MongooseUser.findOne(query).select('+password');
+    }
+    return await this.findOne(query);
+  }
+
   static async findById(id) {
     if (!isInMemory && mongoose.connection.readyState === 1) {
       return MongooseUser.findById(id);
